@@ -33,14 +33,6 @@ contexts:
     - include: operators
     - include: strings
 
-  # gate-declarations:
-  #   - include: type-annotation
-  #   - match: '({{identifier}})\s*'
-  #     captures:
-  #       1: variable.parameter.lnt
-  #   - match: '\]'
-  #     pop: true
-
   type-annotation:
     - match: '{{identifier}}'
       captures:
@@ -71,8 +63,6 @@ contexts:
       captures:
         0: keyword.declaration.lnt
       push: [ident-class]
-      #   2: entity.name.class.lnt
-      #   3: keyword.declaration.lnt
       scope: meta.channel.def.lnt
     - match: 'is'
       scope: keyword.declaration.lnt
