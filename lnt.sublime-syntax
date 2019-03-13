@@ -1,0 +1,137 @@
+%YAML 1.2
+---
+
+comment: |-
+  LNT syntax for Sublime Text.
+  Based on the LNT to LOTOS reference manual:
+  ftp://ftp.inrialpes.fr/pub/vasy/publications/cadp/Champelovier-Clerc-Garavel-et-al-10.pdf
+
+name: LNT
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - lnt
+scope: source.lnt
+variables:
+  identifier: \b([A-Za-z]\w*)\b
+  identifier1: \b([A-Za-z]\w*)
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  prototype:
+    - include: comments
+
+  main:
+    # The main context is the initial starting point of our syntax.
+    # Include other contexts from here (or specify them directly).
+    - include: types
+    - include: channels
+    - include: keywords
+    - include: numbers
+    - include: operators
+    - include: strings
+    - include: gates # TODO move this inside "processes" context
+
+
+  gate-declaration:
+    - include: type-annotation
+    - match: '({{identifier}})\s*'
+      captures:
+        1: variable.parameter.lnt
+    - match: '\]'
+      pop: true
+
+  type-annotation:
+    - match: ':\s*{{identifier}}'
+      captures:
+        1: entity.name.class.lnt
+
+  types:
+    - match: '(type)\s+{{identifier}}\s+(is)'
+      captures:
+        1: keyword.declaration.lnt
+        2: entity.name.class.lnt
+        3: keyword.declaration.lnt
+      scope: type.def.lnt
+    - match: '(end)\s+(type)'
+      captures:
+        1: keyword.declaration.lnt
+        2: keyword.declaration.lnt
+      set: main
+
+
+  channels:
+    - match: '(channel)\s+{{identifier}}\s+(is)'
+      captures:
+        1: keyword.declaration.lnt
+        2: entity.name.class.lnt
+        3: keyword.declaration.lnt
+      scope: channel.def.lnt
+    - match: '(end)\s+(channel)'
+      captures:
+        1: keyword.declaration.lnt
+        2: keyword.declaration.lnt
+      set: main
+
+
+  gates:
+    - match: '\['
+      set: gate-declaration
+
+
+  operators:
+    - match: =>|:=
+      scope: keyword.operator.assignment.lnt
+    - match: =|!=|>|<
+      scope: keyword.operator.logical.lnt
+    - match: \+|-|\*|/
+      scope: keyword.operator.arithmetic.lnt
+
+
+
+  keywords:
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(|any|array|as|assert|break|by|case|channel|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|of|only|out|par|process|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
+      scope: keyword.control.lnt
+
+  numbers:
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric.lnt
+
+  strings:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character.
+    - match: '"'
+      scope: punctuation.definition.string.begin.lnt
+      push: inside_string
+
+  inside_string:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.lnt
+    - match: '\.'
+      scope: constant.character.escape.lnt
+    - match: '"'
+      scope: punctuation.definition.string.end.lnt
+      pop: true
+
+  comments:
+    # One-line comments (Ada-style)
+    - match: '--'
+      scope: punctuation.definition.comment.lnt
+      push:
+        # This is an anonymous context push for brevity.
+        - meta_scope: comment.line.double-hyphen.lnt
+        - match: $\n?
+          pop: true
+      comments:
+    # Multiline comments (ML-style)
+    - match: '\(\*'
+      scope: punctuation.definition.comment.lnt
+      push:
+        - meta_scope: comment.block.lnt
+        - match: '\*\)'
+          pop: true
+
