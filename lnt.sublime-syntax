@@ -32,108 +32,116 @@ contexts:
     - include: constants
     - include: operators
     - include: strings
-
-  type-annotation:
-    - match: '{{identifier}}'
-      captures:
-        1: entity.name.class.lnt
-      pop: true
+    - include: type-annotation
 
   types:
+    - meta_scope: meta.type.declaration.lnt
     - match: '\btype\b'
-      captures:
-        0: keyword.declaration.lnt
-      push: [inside-type, ident-class]
+      scope: keyword.declaration.lnt
+      push: [inside-type, ident-type]
 
   inside-type:
-    - match: '(?=\()'
+    - match: (?=\()
       push: signature
-    - match: '\b(end)\b\s+\b(type)\b'
-      scope: end.type.lnt
-      captures:
-        1: keyword.declaration.lnt
-        2: keyword.declaration.lnt
+    - match: '\bend\s+type\b'
+      scope: keyword.declaration.lnt
       set: main
     - include: keywords
     - include: constants
     - include: strings
 
   channels:
+    - meta_scope: meta.channel.declaration.lnt
     - match: '\bchannel\b'
-      captures:
-        0: keyword.declaration.lnt
-      push: [ident-class]
-      scope: meta.channel.def.lnt
+      scope: keyword.declaration.channel.lnt
+      push: [inside-channel, ident-class]
+
+  inside-channel:
     - match: 'is'
       scope: keyword.declaration.lnt
-    - match: '(end)\s+(channel)'
-      captures:
-        1: keyword.declaration.lnt
-        2: keyword.declaration.lnt
+    - match: '\('
+      push:
+        - match: '{{identifier}}'
+          scope: storage.type.name.lnt
+        - match: '\)'
+          pop: true
+    - match: '\bend\s+channel\b'
+      scope: keyword.declaration.lnt
       set: main
 
   processes:
+    - meta_scope: meta.process.lnt
     - match: '\bprocess\b'
-      scope: keyword.declaration.lnt
-      push: [signature, gates, ident-fun]
+      scope: keyword.declaration.process.lnt
+      push: [declaration, ident-fun]
     - match: 'is'
       scope: keyword.declaration.lnt
-    - match: '\b(end)\s+\b(process)\b'
-      captures:
-        1: keyword.declaration.lnt
-        2: keyword.declaration.lnt
+    - match: '\bend\s+process\b'
+      scope: keyword.declaration.lnt
       set: main
 
   functions:
+    - meta_scope: meta.function.lnt
     - match: '\bfunction\b'
-      captures:
-        0: keyword.declaration.lnt
-      push: [type-annotation, signature, ident-fun]
+      scope: keyword.declaration.function.lnt
+      push: [declaration, ident-fun]
     - match: 'is'
       scope: keyword.declaration.lnt
-    - match: '\b(end)\s+\b(function)\b'
-      captures:
-        1: keyword.declaration.lnt
-        2: keyword.declaration.lnt
+    - match: '\bend\s+function\b'
+      scope: keyword.declaration.lnt
       set: main
 
+  declaration:
+    - match: (?=\[)
+      push: gates
+    - match: (?=\()
+      push: signature
+    - include: type-annotation
+    - match: 'is'
+      scope: keyword.declaration.lnt
+      pop: true
+
   ident-class:
-    - match: '{{identifier}}\s*'
+    - match: '{{identifier}}'
       scope: entity.name.class.lnt
       pop: true
 
   ident-fun:
-    - match: '{{identifier}}\s*'
-      scope: support.function.lnt
+    - match: '{{identifier}}'
+      scope: entity.name.function.lnt
       pop: true
+
+  ident-type:
+    - match: '{{identifier}}'
+      scope: storage.type.name.lnt
+      pop: true
+
+  type-annotation:
+    - match: (?=:)
+      push: ident-type
 
   gates:
     - match: '\['
       set:
-        - match: '({{identifier}})\s*'
-          captures:
-            1: variable.parameter.lnt
-        - match: (?=:)
-          push: type-annotation
-        - match: '\]\s*'
+        - match: '\braise\b'
+          scope: keyword.control.lnt
+        - match: '{{identifier}}'
+          scope: variable.parameter.lnt
+        - include: type-annotation
+        - match: '\]'
           pop: true
 
   signature:
+    - meta_scope: meta.function.parameters.lnt
     - match: '\('
       set:
-        - match: '\bin|out\b'
-          scope: keyword.control.lnt
-        - match: '({{identifier}})\s*'
-          captures:
-            1: variable.parameter.lnt
-        - match: (?=:)
-          push: type-annotation
+        - match: '\bin|out|var\b'
+          scope: keyword.other.lnt
+        - match: '{{identifier}}'
+          scope: variable.parameter.lnt
+        - include: type-annotation
         - match: '\)'
           pop: true
-    # Workaround for processes
-    - match: 'is'
-      scope: keyword.declaration.lnt
-      pop: true
 
 
   operators:
@@ -145,15 +153,18 @@ contexts:
       scope: keyword.operator.arithmetic.lnt
     - match: \?
       scope: keyword.operator.lnt
+    - match: '\bof|any\b'
+      scope: keyword.operator.word.lnt
+      push: ident-type
+
 
   keywords:
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
     # need to be escaped: this is done by using two single quotes next to each
     # other.
-    - match: '\b(|any|array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|of|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
+    - match: '\b(array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
       scope: keyword.control.lnt
-
 
 
   numbers:
@@ -183,7 +194,6 @@ contexts:
   constants:
     - match: '\b(true|false)\b'
       scope: constant.other.lnt
-
 
   comments:
     # One-line comments (Ada-style)
