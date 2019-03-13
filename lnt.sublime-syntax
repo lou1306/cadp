@@ -13,7 +13,6 @@ file_extensions:
 scope: source.lnt
 variables:
   identifier: \b([A-Za-z]\w*)\b
-  identifier1: \b([A-Za-z]\w*)
 
 contexts:
   # The prototype context is prepended to all contexts but those setting
@@ -26,79 +25,149 @@ contexts:
     # Include other contexts from here (or specify them directly).
     - include: types
     - include: channels
+    - include: processes
+    - include: functions
     - include: keywords
     - include: numbers
+    - include: constants
     - include: operators
     - include: strings
-    - include: gates # TODO move this inside "processes" context
 
-
-  gate-declaration:
-    - include: type-annotation
-    - match: '({{identifier}})\s*'
-      captures:
-        1: variable.parameter.lnt
-    - match: '\]'
-      pop: true
+  # gate-declarations:
+  #   - include: type-annotation
+  #   - match: '({{identifier}})\s*'
+  #     captures:
+  #       1: variable.parameter.lnt
+  #   - match: '\]'
+  #     pop: true
 
   type-annotation:
-    - match: ':\s*{{identifier}}'
+    - match: '{{identifier}}'
       captures:
         1: entity.name.class.lnt
+      pop: true
 
   types:
-    - match: '(type)\s+{{identifier}}\s+(is)'
+    - match: '\btype\b'
       captures:
-        1: keyword.declaration.lnt
-        2: entity.name.class.lnt
-        3: keyword.declaration.lnt
-      scope: type.def.lnt
-    - match: '(end)\s+(type)'
+        0: keyword.declaration.lnt
+      push: [inside-type, ident-class]
+
+  inside-type:
+    - match: '(?=\()'
+      push: signature
+    - match: '\b(end)\b\s+\b(type)\b'
+      scope: end.type.lnt
       captures:
         1: keyword.declaration.lnt
         2: keyword.declaration.lnt
       set: main
-
+    - include: keywords
+    - include: constants
+    - include: strings
 
   channels:
-    - match: '(channel)\s+{{identifier}}\s+(is)'
+    - match: '\bchannel\b'
       captures:
-        1: keyword.declaration.lnt
-        2: entity.name.class.lnt
-        3: keyword.declaration.lnt
-      scope: channel.def.lnt
+        0: keyword.declaration.lnt
+      push: [ident-class]
+      #   2: entity.name.class.lnt
+      #   3: keyword.declaration.lnt
+      scope: meta.channel.def.lnt
+    - match: 'is'
+      scope: keyword.declaration.lnt
     - match: '(end)\s+(channel)'
       captures:
         1: keyword.declaration.lnt
         2: keyword.declaration.lnt
       set: main
 
+  processes:
+    - match: '\bprocess\b'
+      scope: keyword.declaration.lnt
+      push: [signature, gates, ident-fun]
+    - match: 'is'
+      scope: keyword.declaration.lnt
+    - match: '\b(end)\s+\b(process)\b'
+      captures:
+        1: keyword.declaration.lnt
+        2: keyword.declaration.lnt
+      set: main
+
+  functions:
+    - match: '\bfunction\b'
+      captures:
+        0: keyword.declaration.lnt
+      push: [type-annotation, signature, ident-fun]
+    - match: 'is'
+      scope: keyword.declaration.lnt
+    - match: '\b(end)\s+\b(function)\b'
+      captures:
+        1: keyword.declaration.lnt
+        2: keyword.declaration.lnt
+      set: main
+
+  ident-class:
+    - match: '{{identifier}}\s*'
+      scope: entity.name.class.lnt
+      pop: true
+
+  ident-fun:
+    - match: '{{identifier}}\s*'
+      scope: support.function.lnt
+      pop: true
 
   gates:
     - match: '\['
-      set: gate-declaration
+      set:
+        - match: '({{identifier}})\s*'
+          captures:
+            1: variable.parameter.lnt
+        - match: (?=:)
+          push: type-annotation
+        - match: '\]\s*'
+          pop: true
+
+  signature:
+    - match: '\('
+      set:
+        - match: '\bin|out\b'
+          scope: keyword.control.lnt
+        - match: '({{identifier}})\s*'
+          captures:
+            1: variable.parameter.lnt
+        - match: (?=:)
+          push: type-annotation
+        - match: '\)'
+          pop: true
+    # Workaround for processes
+    - match: 'is'
+      scope: keyword.declaration.lnt
+      pop: true
 
 
   operators:
     - match: =>|:=
       scope: keyword.operator.assignment.lnt
-    - match: =|!=|>|<
+    - match: =|!=|>|<|\b(and|or|not)\b
       scope: keyword.operator.logical.lnt
-    - match: \+|-|\*|/
+    - match: \+|-|\*|/|\b(mod|rem|abs|min|max|succ|prec|sign)\b
       scope: keyword.operator.arithmetic.lnt
-
-
+    - match: \?
+      scope: keyword.operator.lnt
 
   keywords:
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
     # need to be escaped: this is done by using two single quotes next to each
     # other.
-    - match: '\b(|any|array|as|assert|break|by|case|channel|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|of|only|out|par|process|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
+    - match: '\b(|any|array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|of|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
       scope: keyword.control.lnt
 
+
+
   numbers:
-    - match: '\b(-)?[0-9.]+\b'
+    - match: '\b(?:[0-9][0-9.]*)|(?:\.[0-9]+)\b'
       scope: constant.numeric.lnt
 
   strings:
@@ -108,6 +177,10 @@ contexts:
       scope: punctuation.definition.string.begin.lnt
       push: inside_string
 
+  is:
+    - match: 'is'
+      scope: keyword.declaration.lnt
+
   inside_string:
     - meta_include_prototype: false
     - meta_scope: string.quoted.double.lnt
@@ -116,6 +189,11 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.end.lnt
       pop: true
+
+  constants:
+    - match: '\b(true|false)\b'
+      scope: constant.other.lnt
+
 
   comments:
     # One-line comments (Ada-style)
