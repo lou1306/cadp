@@ -37,18 +37,25 @@ contexts:
   types:
     - meta_scope: meta.type.declaration.lnt
     - match: '\btype\b'
-      scope: keyword.declaration.lnt
+      scope: keyword.declaration.type.lnt
       push: [inside-type, ident-type]
 
   inside-type:
     - match: (?=\()
       push: signature
-    - match: '\bend\s+type\b'
-      scope: keyword.declaration.lnt
-      set: main
+    - match: '\bend\b'
+      scope: keyword.declaration.type.end.lnt
+      set:
+        - match: '\btype\b'
+          scope: keyword.declaration.type.end.lnt
+          set: main
+        - match: '\w+'
+          scope: invalid.illegal.endtype.lnt
+          set: main
     - include: keywords
     - include: constants
     - include: strings
+
 
   channels:
     - meta_scope: meta.channel.declaration.lnt
@@ -65,9 +72,15 @@ contexts:
           scope: storage.type.name.lnt
         - match: '\)'
           pop: true
-    - match: '\bend\s+channel\b'
-      scope: keyword.declaration.lnt
-      set: main
+    - match: '\bend\b'
+      scope: keyword.declaration.channel.end.lnt
+      set:
+        - match: '\bchannel\b'
+          scope: keyword.declaration.channel.end.lnt
+          set: main
+        - match: '\w+'
+          scope: invalid.illegal.endchannel.lnt
+          set: main
 
   processes:
     - meta_scope: meta.process.lnt
@@ -143,7 +156,6 @@ contexts:
         - match: '\)'
           pop: true
 
-
   operators:
     - match: =>|:=
       scope: keyword.operator.assignment.lnt
@@ -157,7 +169,6 @@ contexts:
       scope: keyword.operator.word.lnt
       push: ident-type
 
-
   keywords:
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
@@ -165,7 +176,6 @@ contexts:
     # other.
     - match: '\b(array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
       scope: keyword.control.lnt
-
 
   numbers:
     - match: '\b(?:[0-9][0-9.]*)|(?:\.[0-9]+)\b'
