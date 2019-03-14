@@ -216,6 +216,8 @@ contexts:
           pop: true
       comments:
     # Multiline comments (ML-style)
+    - match: '\*\)'
+      scope: invalid.illegal.stray-end-comment.lnt
     - match: '\(\*'
       scope: punctuation.definition.comment.lnt
       push:
