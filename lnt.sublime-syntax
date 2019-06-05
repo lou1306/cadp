@@ -205,7 +205,7 @@ contexts:
 
   is:
     - match: \bis\b
-      scope: keyword.declaration.lnt
+      scope: keyword.declaration.is.lnt
       pop: true
 
   with:
