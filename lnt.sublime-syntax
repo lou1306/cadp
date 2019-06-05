@@ -63,6 +63,7 @@ contexts:
       push: [inside-type, is, ident-type]
 
   inside-type:
+    - include: with
     - match: (?=\()
       push: signature
     - match: '\bend\b'
@@ -197,6 +198,11 @@ contexts:
     - match: \bis\b
       scope: keyword.declaration.lnt
       pop: true
+
+  with:
+    - match: \bwith\b
+      scope: keyword.other.lnt
+    - include: strings
 
   numbers:
     - match: (?:\b|-)0[Bb][0-1]([0-1]|\_(?=[0-1]))*\b
