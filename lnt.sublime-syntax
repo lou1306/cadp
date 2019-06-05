@@ -60,7 +60,7 @@ contexts:
     - meta_scope: meta.type.declaration.lnt
     - match: '\btype\b'
       scope: keyword.declaration.type.lnt
-      push: [inside-type, ident-type]
+      push: [inside-type, is, ident-type]
 
   inside-type:
     - match: (?=\()
@@ -109,8 +109,6 @@ contexts:
     - match: '\bprocess\b'
       scope: keyword.declaration.process.lnt
       push: [declaration, ident-fun]
-    - match: 'is'
-      scope: keyword.declaration.lnt
     - match: '\bend\s+process\b'
       scope: keyword.declaration.lnt
       set: main
@@ -120,8 +118,6 @@ contexts:
     - match: '\bfunction\b'
       scope: keyword.declaration.function.lnt
       push: [declaration, ident-fun]
-    - match: 'is'
-      scope: keyword.declaration.lnt
     - match: '\bend\s+function\b'
       scope: keyword.declaration.lnt
       set: main
@@ -132,9 +128,7 @@ contexts:
     - match: (?=\()
       push: signature
     - include: type-annotation
-    - match: 'is'
-      scope: keyword.declaration.lnt
-      pop: true
+    - include: is
 
   ident-class:
     - match: '{{identifier}}'
@@ -199,6 +193,11 @@ contexts:
     - match: '\b(array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
       scope: keyword.control.lnt
 
+  is:
+    - match: \bis\b
+      scope: keyword.declaration.lnt
+      pop: true
+
   numbers:
     - match: (?:\b|-)0[Bb][0-1]([0-1]|\_(?=[0-1]))*\b
       scope: constant.numeric.integer.octal.lnt
@@ -220,10 +219,6 @@ contexts:
       scope: punctuation.definition.string.begin.lnt
       push: inside_string
 
-  is:
-    - match: 'is'
-      scope: keyword.declaration.lnt
-
   inside_string:
     - meta_include_prototype: false
     - meta_scope: string.quoted.double.lnt
@@ -232,10 +227,6 @@ contexts:
     - match: '"'
       scope: punctuation.definition.string.end.lnt
       pop: true
-
-  constants:
-    - match: '\b(true|false)\b'
-      scope: constant.other.lnt
 
   comments:
     # One-line comments (Ada-style)
