@@ -83,6 +83,10 @@ contexts:
           pop: true
     - include: constants
     - include: operators
+    # For predicate types
+    - include: type-annotation
+    - match: '\bwhere\b'
+      scope: keyword.other.lnt
 
   channels:
     - meta_scope: meta.channel.declaration.lnt
