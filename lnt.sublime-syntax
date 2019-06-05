@@ -23,16 +23,38 @@ contexts:
   main:
     # The main context is the initial starting point of our syntax.
     # Include other contexts from here (or specify them directly).
+    - include: module
+
+  inside-module:
     - include: types
     - include: channels
     - include: processes
     - include: functions
-    - include: keywords
-    - include: numbers
     - include: constants
+    - include: keywords
     - include: operators
     - include: strings
     - include: type-annotation
+
+  module:
+    - meta_scope: meta.namespace.lnt
+    - match: \bmodule\b
+      #meta_scope: meta.namespace.lnt
+      scope: keyword.other.lnt
+      push: [inside-module, ident-module]
+    - match: .+
+      scope: invalid.illegal.lnt
+
+  ident-module:
+    - include: with
+    - include: is
+    - match: '{{identifier}}'
+      scope: entity.name.namespace.lnt
+    - match: \(
+      push:
+      - meta_scope: meta.namespace.include.lnt
+      - match: \)
+        pop: true
 
   types:
     - meta_scope: meta.type.declaration.lnt
