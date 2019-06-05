@@ -90,7 +90,7 @@ contexts:
   inside-channel:
     - match: '\('
       set:
-        - match: '{{identifier}}(?!:)'
+        - match: '{{identifier}}(?!\s*:)'
           scope: storage.type.lnt
         - match: '{{identifier}}'
           scope: variable.parameter.lnt
