@@ -177,22 +177,23 @@ contexts:
   operators:
     - match: =>|:=
       scope: keyword.operator.assignment.lnt
+    - match: \|\||\[\]
+      scope: keyword.operator.process.lnt
+    - match: \|
+      scope: keyword.operator.lnt
     - match: =|!=|>|<|\b(and|or|not)\b
       scope: keyword.operator.logical.lnt
     - match: \+|-|\*|/|\b(mod|rem|abs|min|max|succ|prec|sign)\b
       scope: keyword.operator.arithmetic.lnt
-    - match: \?
+    - match: \!?\?
       scope: keyword.operator.lnt
-    - match: '\bof|any\b'
+    - match: \bof\b
       scope: keyword.operator.word.lnt
       push: ident-type
 
+
   keywords:
-    # Note that blackslashes don't need to be escaped within single quoted
-    # strings in YAML. When using single quoted strings, only single quotes
-    # need to be escaped: this is done by using two single quotes next to each
-    # other.
-    - match: '\b(array|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|function|hide|if|in|is|list|loop|module|null|only|out|par|raise|range|return|select|set|sorted|stop|then|type|use|var|where|while|with)\b'
+    - match: '\b(any|as|assert|break|by|case|disrupt|else|elsif|end|eval|for|hide|if|in|loop|module|null|only|out|par|raise|range|return|select|stop|then|use|var|where|while)\b'
       scope: keyword.control.lnt
 
   is:
