@@ -89,9 +89,11 @@ contexts:
 
   inside-channel:
     - match: '\('
-      push:
-        - match: '{{identifier}}'
+      set:
+        - match: '{{identifier}}(?!:)'
           scope: storage.type.lnt
+        - match: '{{identifier}}'
+          scope: variable.parameter.lnt
         - match: '\)'
           pop: true
     - match: '\bend\b'
