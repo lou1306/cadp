@@ -12,7 +12,7 @@ file_extensions:
   - lnt
 scope: source.lnt
 variables:
-  identifier: \b([A-Za-z]\w*)\b
+  identifier: \b(?:[A-Za-z]\w*)\b
 
 contexts:
   # The prototype context is prepended to all contexts but those setting
