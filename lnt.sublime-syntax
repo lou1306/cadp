@@ -93,7 +93,7 @@ contexts:
     - match: '\('
       push:
         - match: '{{identifier}}'
-          scope: storage.type.name.lnt
+          scope: storage.type.lnt
         - match: '\)'
           pop: true
     - match: '\bend\b'
@@ -144,7 +144,7 @@ contexts:
 
   ident-type:
     - match: '{{identifier}}'
-      scope: storage.type.name.lnt
+      scope: storage.type.lnt
       pop: true
 
   type-annotation:
