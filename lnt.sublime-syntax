@@ -65,7 +65,7 @@ contexts:
 
   inside-type:
     - meta_scope: meta.type.declaration.lnt
-    - match: \b(sorted|set|array|list)\b
+    - match: \b(sorted|set|array|list|range)\b
       scope: storage.type.lnt
     - include: pragmas
     - match: (?=with)
