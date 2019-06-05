@@ -29,6 +29,7 @@ contexts:
     - include: types
     - include: channels
     - include: processes
+    - include: pragmas
     - include: functions
     - include: constants
     - include: keywords
@@ -66,6 +67,7 @@ contexts:
     - meta_scope: meta.type.declaration.lnt
     - match: \b(sorted|set|array|list)\b
       scope: storage.type.lnt
+    - include: pragmas
     - include: with
     - match: (?=\()
       push: signature
@@ -205,6 +207,20 @@ contexts:
     - match: \bwith\b
       scope: keyword.other.lnt
     - include: strings
+
+  pragmas:
+    - match: (\!)(?:implemented|represented|iterated|compared|printed)by\b
+      scope: keyword.other.lnt
+      captures:
+         1: punctuation.definition.keyword.lnt
+    - match: (\!)(?:nat|int)\_(?:bits|sup|inf|check)
+      scope: keyword.other.lnt
+      captures:
+         1: punctuation.definition.keyword.lnt
+    - match: (\!)(?:(?:string\_)?card|list|bits|external)
+      scope: keyword.other.lnt
+      captures:
+         1: punctuation.definition.keyword.lnt
 
   constants:
     - match: '\b(true|false|nil)\b'
