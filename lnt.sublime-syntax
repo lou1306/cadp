@@ -63,6 +63,9 @@ contexts:
       push: [inside-type, is, ident-type]
 
   inside-type:
+    - meta_scope: meta.type.declaration.lnt
+    - match: \b(sorted|set|array|list)\b
+      scope: storage.type.lnt
     - include: with
     - match: (?=\()
       push: signature
