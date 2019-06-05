@@ -205,6 +205,11 @@ contexts:
       scope: keyword.other.lnt
     - include: strings
 
+  constants:
+    - match: '\b(true|false|nil)\b'
+      scope: constant.language.lnt
+    - include: numbers
+
   numbers:
     - match: (?:\b|-)0[Bb][0-1]([0-1]|\_(?=[0-1]))*\b
       scope: constant.numeric.integer.octal.lnt
