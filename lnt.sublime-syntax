@@ -42,13 +42,13 @@ contexts:
     - match: \bmodule\b
       #meta_scope: meta.namespace.lnt
       scope: keyword.other.lnt
-      push: [inside-module, ident-module]
+      push: [inside-module, is, with, ident-module]
     - match: .+
       scope: invalid.illegal.lnt
 
   ident-module:
-    - include: with
-    - include: is
+    - match: (?=with)|(?=is)
+      pop: true
     - match: '{{identifier}}'
       scope: entity.name.namespace.lnt
     - match: \(
@@ -68,7 +68,8 @@ contexts:
     - match: \b(sorted|set|array|list)\b
       scope: storage.type.lnt
     - include: pragmas
-    - include: with
+    - match: (?=with)
+      push: with
     - match: (?=\()
       push: signature
     - match: '\bend\b'
@@ -204,9 +205,16 @@ contexts:
       pop: true
 
   with:
+    - match: (?=end)|(?=is)
+      pop: true
     - match: \bwith\b
-      scope: keyword.other.lnt
-    - include: strings
+      scope: keyword.other.with.lnt
+      set:
+      - match: \"(?:eq|ne|lt|le|gt|ge|ord|val|get|set|update|card|first|last|==|<=?|>=?|<>|\!=)\"
+        scope: string.quoted.double.lnt
+      - match: (?=end)|(?=is)
+        pop: true
+
 
   pragmas:
     - match: (\!)(?:implemented|represented|iterated|compared|printed)by\b
