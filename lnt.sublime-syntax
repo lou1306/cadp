@@ -95,16 +95,16 @@ contexts:
         - match: '{{identifier}}'
           scope: variable.parameter.lnt
         - match: '\)'
-          pop: true
-    - match: '\bend\b'
-      scope: keyword.declaration.channel.end.lnt
-      set:
-        - match: '\bchannel\b'
-          scope: keyword.declaration.channel.end.lnt
-          pop: true
-        - match: '\w+'
-          scope: invalid.illegal.endchannel.lnt
-          pop: true
+          set:
+          - match: '\bend\b'
+            scope: keyword.declaration.channel.end.lnt
+            set:
+              - match: '\bchannel\b'
+                scope: keyword.declaration.channel.end.lnt
+                pop: true
+              - match: '\w+'
+                scope: invalid.illegal.endchannel.lnt
+                pop: true
 
   processes:
     - meta_scope: meta.process.lnt
