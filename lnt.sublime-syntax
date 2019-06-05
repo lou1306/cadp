@@ -140,7 +140,7 @@ contexts:
       pop: true
 
   ident-fun:
-    - match: '{{identifier}}'
+    - match: '{{identifier}}|\_[A-Za-z]\w*\b'
       scope: entity.name.function.lnt
       pop: true
 
