@@ -2,12 +2,20 @@
 ---
 
 comment: |-
-  LNT syntax for Sublime Text.
-  Based on the LNT to LOTOS reference manual:
-  ftp://ftp.inrialpes.fr/pub/vasy/publications/cadp/Champelovier-Clerc-Garavel-et-al-10.pdf
+  LNT syntax highlighting for Sublime Text.
+
+  References:
+  * LNT to LOTOS reference manual:
+    ftp://ftp.inrialpes.fr/pub/vasy/publications/cadp/Champelovier-Clerc-Garavel-et-al-10.pdf
+  * sublime-syntax reference:
+    https://www.sublimetext.com/docs/3/syntax.html
+  * Sublime scope naming conventions:
+    https://www.sublimetext.com/docs/3/scope_naming.html
+  Author: Luca Di Stefano
+  Version: 1.0
+  Date: 2019-06-05
 
 name: LNT
-# See http://www.sublimetext.com/docs/3/syntax.html
 file_extensions:
   - lnt
 scope: source.lnt
