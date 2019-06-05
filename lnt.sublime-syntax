@@ -82,7 +82,7 @@ contexts:
     - meta_scope: meta.channel.declaration.lnt
     - match: '\bchannel\b'
       scope: keyword.declaration.channel.lnt
-      push: [inside-channel, ident-class]
+      push: [inside-channel, ident-type]
 
   inside-channel:
     - match: 'is'
