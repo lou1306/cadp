@@ -71,14 +71,12 @@ contexts:
       set:
         - match: '\btype\b'
           scope: keyword.declaration.type.end.lnt
-          set: main
+          pop: true
         - match: '\w+'
           scope: invalid.illegal.endtype.lnt
-          set: main
-    - include: keywords
+          pop: true
     - include: constants
-    - include: strings
-
+    - include: operators
 
   channels:
     - meta_scope: meta.channel.declaration.lnt
@@ -100,10 +98,10 @@ contexts:
       set:
         - match: '\bchannel\b'
           scope: keyword.declaration.channel.end.lnt
-          set: main
+          pop: true
         - match: '\w+'
           scope: invalid.illegal.endchannel.lnt
-          set: main
+          pop: true
 
   processes:
     - meta_scope: meta.process.lnt
