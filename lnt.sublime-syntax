@@ -108,12 +108,12 @@ contexts:
 
   processes:
     - meta_scope: meta.process.lnt
+    - match: '\b(end)(\s+)process\b'
+      scope: keyword.declaration.lnt
+      set: inside-module
     - match: '\bprocess\b'
       scope: keyword.declaration.process.lnt
       push: [declaration, ident-fun]
-    - match: '\bend\s+process\b'
-      scope: keyword.declaration.lnt
-      set: main
 
   functions:
     - meta_scope: meta.function.lnt
@@ -122,7 +122,7 @@ contexts:
       push: [declaration, ident-fun]
     - match: '\bend\s+function\b'
       scope: keyword.declaration.lnt
-      set: main
+      set: inside-module
 
   declaration:
     - match: (?=\[)
