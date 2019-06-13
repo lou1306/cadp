@@ -181,7 +181,7 @@ contexts:
     - meta_scope: meta.function.parameters.lnt
     - match: '\('
       set:
-        - match: '\bin|out|var\b'
+        - match: '\b(in|out|var)\b'
           scope: keyword.other.lnt
         - match: '{{identifier}}'
           scope: variable.parameter.lnt
