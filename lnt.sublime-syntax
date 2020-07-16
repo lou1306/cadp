@@ -32,6 +32,7 @@ contexts:
     # The main context is the initial starting point of our syntax.
     # Include other contexts from here (or specify them directly).
     - include: module
+    - include: inside-module
 
   inside-module:
     - include: types
@@ -51,8 +52,6 @@ contexts:
       #meta_scope: meta.namespace.lnt
       scope: keyword.other.lnt
       push: [inside-module, is, with, ident-module]
-    - match: .+
-      scope: invalid.illegal.lnt
 
   ident-module:
     - match: (?=with)|(?=is)
